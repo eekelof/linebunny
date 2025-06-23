@@ -4,7 +4,7 @@ Count lines of code in projects
 
 ## Usage
 ```bash
-bunx linebunny <directory> [-t file_type] [-l low_threshold] [-h high_threshold]
+bunx linebunny <directory> [-t file_type] [-l low_threshold] [-h high_threshold] [-s]
 ```
 
 Count TypeScript files in src directory:
@@ -24,12 +24,12 @@ bunx linebunny src -t js -t ts -t jsx -t tsx -t vue
 
 Check with manual thresholds:
 ```bash
-bunx linebunny . -t js 80 -h 150
+bunx linebunny . -t js -l 80 -h 150
 ```
 
-Check specific framework files:
+Check specific framework files sorted by line count:
 ```bash
-bunx linebunny components -t vue -t svelte -l 120 -h 250
+bunx linebunny components -t vue -t svelte -l 120 -h 250 -s
 ```
 
 
@@ -42,3 +42,4 @@ bunx linebunny components -t vue -t svelte -l 120 -h 250
 - `-t, --type` - File extension to include (can be used multiple times)
 - `-l, --low` - Low threshold for green/yellow boundary (default: 100)
 - `-h, --high` - High threshold for yellow/red boundary (default: 300)
+- `-s, --sort` - Sort files by line count in ascending order

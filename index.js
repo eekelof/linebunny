@@ -8,21 +8,23 @@ let targetDir = '';
 let fileTypes = [];
 let lowThreshold = 100;
 let highThreshold = 300;
+let shouldSort = false;
 
 // Function to show usage
 function showUsage() {
     console.log(chalk.yellow('Usage:'));
-    console.log(chalk.white('  bun run index.js <directory> [-t type] [-l low_threshold] [-h high_threshold]'));
+    console.log(chalk.white('  bun run index.js <directory> [-t type] [-l low_threshold] [-h high_threshold] [-s]'));
     console.log('');
     console.log(chalk.yellow('Options:'));
     console.log(chalk.white('  <directory>           Directory to search in'));
     console.log(chalk.white('  -t, --type            File extension to include (can be used multiple times)'));
     console.log(chalk.white('  -l, --low             Low threshold for green/yellow boundary ') + chalk.gray('(default: 100)'));
     console.log(chalk.white('  -h, --high            High threshold for yellow/red boundary ') + chalk.gray('(default: 300)'));
+    console.log(chalk.white('  -s, --sort            Sort files by line count (ascending)'));
     console.log('');
     console.log(chalk.yellow('Examples:'));
     console.log(chalk.white('  bun run index.js src/ts -t ts -t tsx'));
-    console.log(chalk.white('  bun run index.js . -t js -t jsx -l 50 -h 200'));
+    console.log(chalk.white('  bun run index.js . -t js -t jsx -l 50 -h 200 -s'));
     process.exit(1);
 }
 
@@ -69,6 +71,10 @@ function parseArguments() {
                     console.error('Error: -h requires a number');
                     showUsage();
                 }
+                break;
+            case '-s':
+            case '--sort':
+                shouldSort = true;
                 break;
             default:
                 console.error(`Unknown option: ${args[i]}`);
@@ -187,8 +193,10 @@ function main() {
         });
     }
 
-    // Sort results by line count (ascending)
-    results.sort((a, b) => a.lines - b.lines);
+    // Sort results by line count (ascending) only if flag is set
+    if (shouldSort) {
+        results.sort((a, b) => a.lines - b.lines);
+    }
 
     // Print results
     for (const result of results) {
