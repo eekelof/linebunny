@@ -213,12 +213,18 @@ function main() {
     const redPct = (redCount / totalFiles) * 100;
     const avgLines = totalLines / totalFiles;
 
+    // Calculate median
+    const lineCounts = results.map(r => r.lines).sort((a, b) => a - b);
+    const medianLines = totalFiles % 2 === 0
+        ? (lineCounts[totalFiles / 2 - 1] + lineCounts[totalFiles / 2]) / 2
+        : lineCounts[Math.floor(totalFiles / 2)];
+
     console.log('');
     console.log(chalk.white('SUMMARY:'));
     console.log(chalk.green(`${greenCount} files (${greenPct.toFixed(1)}%) < ${lowThreshold} lines`));
     console.log(chalk.yellow(`${yellowCount} files (${yellowPct.toFixed(1)}%) ${lowThreshold}-${highThreshold - 1} lines`));
     console.log(chalk.red(`${redCount} files (${redPct.toFixed(1)}%) >= ${highThreshold} lines`));
-    console.log(chalk.white(`Total: ${totalFiles} files (${totalLines} lines, ${avgLines.toFixed(1)} avg)`));
+    console.log(chalk.white(`Total: ${totalFiles} files (${totalLines} lines, ${avgLines.toFixed(1)} avg, ${medianLines.toFixed(1)} median)`));
 }
 
 // Run the program

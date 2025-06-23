@@ -1,7 +1,7 @@
 {
     "type": "module",
     "name": "linebunny",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Count lines of code in projects",
     "main": "index.js",
     "repository": {
