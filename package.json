@@ -1,0 +1,24 @@
+{
+    "type": "module",
+    "name": "linebunny",
+    "version": "1.0.0",
+    "description": "Count lines of code in projects",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/eekelof/linebunny.git"
+    },
+    "bin": {
+        "linebunny": "index.js"
+    },
+    "keywords": [
+        "linebunny"
+    ],
+    "author": "eekelof",
+    "license": "MIT",
+    "dependencies": {
+        "chalk": "^5.3.0",
+        "fs": "0.0.1-security",
+        "path": "^0.12.7"
+    }
+}
