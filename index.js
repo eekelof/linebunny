@@ -9,11 +9,12 @@ let fileTypes = [];
 let lowThreshold = 100;
 let highThreshold = 300;
 let shouldSort = false;
+let ignoreDirs = [];
 
 // Function to show usage
 function showUsage() {
     console.log(chalk.yellow('Usage:'));
-    console.log(chalk.white('  bun run index.js <directory> [-t type] [-l low_threshold] [-h high_threshold] [-s]'));
+    console.log(chalk.white('  bun run index.js <directory> [-t type] [-l low_threshold] [-h high_threshold] [-s] [-i ignore_dir]'));
     console.log('');
     console.log(chalk.yellow('Options:'));
     console.log(chalk.white('  <directory>           Directory to search in'));
@@ -21,10 +22,11 @@ function showUsage() {
     console.log(chalk.white('  -l, --low             Low threshold for green/yellow boundary ') + chalk.gray('(default: 100)'));
     console.log(chalk.white('  -h, --high            High threshold for yellow/red boundary ') + chalk.gray('(default: 300)'));
     console.log(chalk.white('  -s, --sort            Sort files by line count (ascending)'));
+    console.log(chalk.white('  -i, --ignore          Directory name to ignore (can be used multiple times)'));
     console.log('');
     console.log(chalk.yellow('Examples:'));
     console.log(chalk.white('  bun run index.js src/ts -t ts -t tsx'));
-    console.log(chalk.white('  bun run index.js . -t js -t jsx -l 50 -h 200 -s'));
+    console.log(chalk.white('  bun run index.js . -t js -t jsx -l 50 -h 200 -s -i node_modules -i .venv'));
     process.exit(1);
 }
 
@@ -76,6 +78,16 @@ function parseArguments() {
             case '--sort':
                 shouldSort = true;
                 break;
+            case '-i':
+            case '--ignore':
+                if (i + 1 < args.length) {
+                    ignoreDirs.push(args[i + 1]);
+                    i++;
+                } else {
+                    console.error('Error: -i requires a directory name');
+                    showUsage();
+                }
+                break;
             default:
                 console.error(`Unknown option: ${args[i]}`);
                 showUsage();
@@ -105,6 +117,14 @@ function parseArguments() {
     }
 }
 
+// Check if directory should be ignored
+function shouldIgnoreDir(dirPath) {
+    if (ignoreDirs.length === 0) return false;
+
+    const dirName = dirPath.split('/').pop();
+    return ignoreDirs.includes(dirName);
+}
+
 // Recursively find files with specified extensions
 function findFiles(dir, extensions) {
     const files = [];
@@ -120,7 +140,10 @@ function findFiles(dir, extensions) {
                     const stat = statSync(fullPath);
 
                     if (stat.isDirectory()) {
-                        scan(fullPath);
+                        // Skip ignored directories
+                        if (!shouldIgnoreDir(fullPath)) {
+                            scan(fullPath);
+                        }
                     } else if (stat.isFile()) {
                         const ext = extname(entry).slice(1); // Remove the dot
                         if (extensions.includes(ext)) {
